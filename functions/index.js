@@ -17,10 +17,11 @@ const functions = require('firebase-functions');
 initializeApp();
 
 exports.removePersonFromUser = onCall({enforceAppCheck: true,},async (request) => {
-    const documentId = request.data.documentId;
+    const eventorId = request.data.eventorId;
+    const personId = request.data.personId;
     const userId = request.auth.uid;
 
-    await removeUserFromPersonDocument(documentId, userId);
+    await removeUserFromPersonDocument(eventorId, personId, userId);
 
 });
 
@@ -39,8 +40,8 @@ exports.removeAllPersonsForUser = functions.auth.user().onDelete(async (user) =>
     });
 });
 
-async function removeUserFromPersonDocument(documentId, userId) {
-    const docRef = getFirestore().collection("persons").doc(documentId);
+async function removeUserFromPersonDocument(eventorId, personId, userId) {
+    const docRef = getFirestore().collection("persons").where("eventorId", "==", eventorId).where("personId", "==", personId);
 
     const doc = await docRef.get();
 
