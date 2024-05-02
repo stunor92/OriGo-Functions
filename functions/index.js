@@ -21,7 +21,18 @@ exports.removePersonFromUser = onCall({enforceAppCheck: true,},async (request) =
     const personId = request.data.personId;
     const userId = request.auth.uid;
 
-    await removeUserFromPersonDocument(eventorId, personId, userId);
+    const snapshot = await getFirestore().collection("persons")
+    .where("eventorId", '==', eventorId)
+    .where("personId", '==', personId)
+    .get();
+
+    if (snapshot.empty) {
+        throw new functions.https.HttpsError('failed-precondition', 'No user found');
+    }  
+
+    snapshot.forEach(doc => {
+        removeUserFromPersonDocument(doc.id, userId);
+    });
 
 });
 
@@ -40,8 +51,8 @@ exports.removeAllPersonsForUser = functions.auth.user().onDelete(async (user) =>
     });
 });
 
-async function removeUserFromPersonDocument(eventorId, personId, userId) {
-    const docRef = getFirestore().collection("persons").where("eventorId", "==", eventorId).where("personId", "==", personId);
+async function removeUserFromPersonDocument(documentId, userId) {
+    const docRef = getFirestore().collection("persons").doc(documentId);
 
     const doc = await docRef.get();
 
