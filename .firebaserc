@@ -1,7 +1,0 @@
-{
-  "projects": {
-    "default": "origo-dev-e8478",
-    "dev": "origo-dev-e8478",
-    "prod": "origo-5f37d"
-  }
-}
