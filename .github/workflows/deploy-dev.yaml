@@ -4,16 +4,15 @@ on:
   push:
     branches:
       - main
-                
+     
 jobs:
   main:
-    name: Deploy
+    name: Deploy to Firebase
     runs-on: ubuntu-latest
+    environment: Development
     steps:
-    - name: Check out code
-      uses: actions/checkout@master
-    - name: Deploy to Firebase
-      uses: chrissank/deploy-firebase-functions@1.0.0
+    - uses: actions/checkout@v2
+    - uses: jsryudev/deploy-firebase-functions@v0.0.2
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        TARGET: dev
+        FIREBASE_PROJECT: ${{ secrets.FIREBASE_PROJECT_ID }}
